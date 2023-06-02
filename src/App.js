@@ -24,7 +24,10 @@ function App() {
       {
         todoList.map(
           function(item) {
-            return <li><span>{item.id}</span><span>{item.title}</span></li>
+            return <li>
+              <span>{item.id}</span>
+              <span>{item.title}</span>
+              </li>
           }
         )
       }
