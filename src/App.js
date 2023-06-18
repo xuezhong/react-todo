@@ -33,7 +33,7 @@ function DataLoadingComponent() {
 
 function DataDisplayComponent({ data }) {
   // 根据接收到的数据渲染组件
-  return <div>{/* 渲染数据 */}</div>;
+  return <div>{data/* 渲染数据 */}</div>;
 }
 
 // 异步加载数据的函数示例
@@ -46,20 +46,30 @@ function fetchData() {
   };
   return new Promise(f);
 }
-function useSemiPersistentState()
-{
-  const data = localStorage.getItem('savedTodoList')
-  const [todoList, setTodoList] = React.useState(data?JSON.parse(data):[]);
+
+function App() {
+  const [todoList, setTodoList] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  useEffect(()=>{
+    new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const todoList = localStorage.getItem('savedTodoList')
+        resolve({data:{todoList:JSON.parse(todoList)}});
+      }, 2000)
+    }).then((result) => {
+      setTodoList(result.data.todoList);
+      console.log('0 ' + result.data.todoList);
+      setIsLoading(false);
+    })
+  }, []);
 
   useEffect(()=>{
-    // To store data in local storage
-    console.log(JSON.stringify(todoList));
-    localStorage.setItem('savedTodoList', JSON.stringify(todoList));
-  }, [todoList]);
-  return [todoList, setTodoList];
-}
-function App() {
-  const [todoList, setTodoList] = useSemiPersistentState();
+    if (! isLoading) {
+      // To store data in local storage
+      console.log(JSON.stringify(todoList));
+      localStorage.setItem('savedTodoList', JSON.stringify(todoList));
+    }
+  }, [todoList, isLoading]);
   function removeTodo(id) {
     const newTodoList = todoList.filter((item)=>{
       if (item.id === id){
@@ -68,19 +78,25 @@ function App() {
       return true;
     });
     setTodoList(newTodoList);
+    console.log('1 ' + newTodoList);
   }
   function addTodo(newTodo) {
     const newTodoList = [...todoList, newTodo]
     setTodoList(newTodoList);
-    console.log(newTodoList)
+    console.log('2 ' + newTodoList);
   }
+
   return (
     <>
     <h1>
       Todo List
     </h1>
     <AddTodoForm onAddTodo={addTodo}></AddTodoForm>
-    <TodoList todoList={todoList} onRemoveTodo={removeTodo}/>
+    {
+      isLoading ? <p>Loading</p> : 
+      <TodoList todoList={todoList} onRemoveTodo={removeTodo}/>
+    }
+    
     <DataLoadingComponent/>
     </>
   );
