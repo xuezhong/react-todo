@@ -1,13 +1,13 @@
 import TodoListItem from './TodoListItem';
 
 function TodoList(props) {
-    const {todoList} = props;
+    const {todoList, onRemoveTodo} = props;
     return (
         <ul>
         {
           todoList.map(
             (item) => {
-              return <TodoListItem key={item.id} todo={item}></TodoListItem>
+              return <TodoListItem key={item.id} todo={item} onRemoveTodo={onRemoveTodo}></TodoListItem>
             }
           )
         }
