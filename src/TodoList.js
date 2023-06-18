@@ -1,20 +1,7 @@
 import TodoListItem from './TodoListItem';
-const todoList = [
-    {
-      id:1,
-      title:'complete assignment'
-    },
-    {
-      id:2,
-      title:'reading'
-    },
-    {
-      id:3,
-      title:'work out'
-    }
-  ];
 
-function TodoList() {
+function TodoList(props) {
+    const {todoList} = props;
     return (
         <ul>
         {

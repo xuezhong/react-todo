@@ -5,8 +5,7 @@ function TodoListItem(props) {
       });*/
     const {todo} = props;
     return (
-        <li>
-        <span>{todo.id}</span>
+        <li key={todo.id}>
         <span>{todo.title}</span>
         </li>
     );
