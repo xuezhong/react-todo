@@ -4,63 +4,72 @@ import AddTodoForm from './AddTodoForm';
 
 import { useEffect, useState } from 'react';
 
-function DataLoadingComponent() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    // 在组件渲染后开始异步加载数据
-    fetchData()
-      .then((result) => {
-        // 数据加载完成后更新状态
-        setData(result);
-      })
-      .catch((error) => {
-        console.error('Error loading data:', error);
-      });
-  }, []);
-
-  return (
-    <div>
-      {data ? (
-        // 数据加载完成后渲染数据
-        <DataDisplayComponent data={data} />
-      ) : (
-        <p>Loading data...</p>
-      )}
-    </div>
-  );
-}
-
-function DataDisplayComponent({ data }) {
-  // 根据接收到的数据渲染组件
-  return <div>{data/* 渲染数据 */}</div>;
-}
-
-// 异步加载数据的函数示例
-function fetchData() {
-  const f = (resolve) => {
-    setTimeout(() => {
-      const data = 'Example data';
-      resolve(data);
-    }, 2000);
-  };
-  return new Promise(f);
-}
-
 function App() {
-  const [todoList, setTodoList] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [todoList, setTodoList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchData = async () => {
+    const options = {method:'GET', headers:{Authorization:`Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`}};
+    const url = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}`;
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const message = `Error has ocurred: ${response.status}`;
+        throw new Error(message);
+      } else {
+        const data = await response.json();
+        console.log(data);
+        return data;
+      }
+    } catch(error) {
+      console.log(error.message);
+      return [];
+    }
+  };
+
+  const postTodo = async (todoTitle) => {
+    try {
+      const airtableData = {
+        fields: {
+          title: todoTitle,
+        },
+      };
+  
+      const response = await fetch(
+        `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/Default`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`,
+          },
+          body: JSON.stringify(airtableData),
+        }
+      );
+  
+      if (!response.ok) {
+        const message = `Error has ocurred:
+                               ${response.status}`;
+        throw new Error(message);
+      }
+  
+      const dataResponse = await response.json();
+      return dataResponse;
+    } catch (error) {
+      console.log(error.message);
+      return null;
+    }
+  };
+
   useEffect(()=>{
-    new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const todoList = localStorage.getItem('savedTodoList')
-        resolve({data:{todoList:JSON.parse(todoList)}});
-      }, 2000)
-    }).then((result) => {
-      setTodoList(result.data.todoList);
-      console.log('0 ' + result.data.todoList);
-      setIsLoading(false);
+    fetchData().then((data) => {
+    const todos = data.records.map((item)=>{
+      return {id:item.id, title:item.fields.title};
     })
+    setTodoList(todos);
+    console.log('0 ' + todos);
+    setIsLoading(false);
+   });
   }, []);
 
   useEffect(()=>{
@@ -91,13 +100,11 @@ function App() {
     <h1>
       Todo List
     </h1>
-    <AddTodoForm onAddTodo={addTodo}></AddTodoForm>
+    <AddTodoForm onAddTodo={addTodo} postTodo={postTodo}></AddTodoForm>
     {
       isLoading ? <p>Loading</p> : 
       <TodoList todoList={todoList} onRemoveTodo={removeTodo}/>
     }
-    
-    <DataLoadingComponent/>
     </>
   );
 }
