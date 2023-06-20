@@ -3,6 +3,7 @@ import TodoListItem from './TodoListItem';
 function TodoList(props) {
     const {todoList, onRemoveTodo} = props;
     return (
+      <nav>
         <ul>
         {
           todoList.map(
@@ -12,6 +13,7 @@ function TodoList(props) {
           )
         }
       </ul>
+      </nav>
     );
 }
 

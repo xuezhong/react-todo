@@ -1,0 +1,32 @@
+.ListItem {
+    color: #656d95;
+    font-size: large;
+  } 
+
+.body {
+    background-color: #edd4d4; /* replace with the desired color value */
+    color:rgb(19, 42, 42);
+    font-family: cursive;
+  }
+
+  nav ul {
+    list-style:decimal;
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  nav li {
+    display:list-item;
+    padding: 20px;
+    margin: 10px;
+  }
+  h1 {
+    color: blue;
+    font-size: larger;
+  }
+  input {
+    color: chartreuse;
+  }
+  button {
+    color: chocolate;
+  }
