@@ -17,16 +17,17 @@
   
   nav li {
     display:list-item;
-    padding: 20px;
-    margin: 10px;
+    padding: 5px;
+    margin: 5px;
   }
   h1 {
     color: blue;
     font-size: larger;
   }
   input {
-    color: chartreuse;
+    color: rgb(3, 4, 2);
   }
   button {
     color: chocolate;
+    margin: 10px;
   }

@@ -1,4 +1,5 @@
 import TodoListItem from './TodoListItem';
+import PropTypes from 'prop-types';
 
 function TodoList(props) {
     const {todoList, onRemoveTodo} = props;
@@ -16,5 +17,8 @@ function TodoList(props) {
       </nav>
     );
 }
-
+TodoList.propTypes = {
+  todoList:PropTypes.array.isRequired,
+  onRemoveTodo:PropTypes.func.isRequired
+};
 export default TodoList;
